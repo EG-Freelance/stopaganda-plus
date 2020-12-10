@@ -1,22 +1,24 @@
 {
   "manifest_version": 2,
-  "name": "Stopaganda for Reddit",
-  "version": "2.1.5",
+  "name": "Stopaganda Plus",
+  "version": "5.0.1",
   "applications": {
     "gecko": {
       "id": "stopaganda-reddit@erikgibbons.com"
     }
   },
 
-  "description": "Applies informative decals to select news subreddits showing bias and accuracy based on data compiled by mediabiasfactcheck.com.",
+  "description": "Applies decals to Facebook, Twitter, Google, Reddit, and DuckDuckGo showing bias and acc data from mediabiasfactcheck.com",
 
   "icons": {
-    "48": "icons/stopaganda-reddit-48.png",
-    "96": "icons/stopaganda-reddit-96.png"
+    "48": "icons/stopaganda-plus-48.png",
+    "96": "icons/stopaganda-plus-96.png",
+    "128": "icons/stopaganda-plus-96-128.png"
   },
 
   "browser_action": {
-    "default_icon": "icons/stopaganda-reddit-38.png"
+    "default_icon": "icons/stopaganda-plus-38.png",
+    "default_popup": "options.html"
   },
 
   "web_accessible_resources": [
@@ -26,7 +28,37 @@
   "content_scripts": [
     {
       "matches": ["*://*.reddit.com/*"],
-      "js": ["stopaganda.js"]
+      "js": ["stopaganda-r.js"]
+    },
+    { 
+      "matches": ["*://*.facebook.com/*"],
+      "js": ["stopaganda-fb.js"]
+    },
+    {
+      "matches": ["*://*.google.com/*"],
+      "js": ["stopaganda-g.js"]
+    },
+    {
+      "matches": ["*://*.twitter.com/*"],
+      "js": ["stopaganda-tw.js"]
+    },{
+      "matches": ["*://*.duckduckgo.com/*"],
+      "js": ["stopaganda-ddg.js"]
+    },{
+      "matches": ["http://*/*", "https://*/*"],
+      "exclude_matches": ["*://*.reddit.com/*", "*://*.facebook.com/*", "*://*.google.com/*", "*://*.twitter.com/*", "*://*.duckduckgo.com/*"],
+      "js": ["stopaganda-other.js"]
     }
-  ]
+  ],
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false    
+  },
+
+  "options_ui": {
+    "page": "options.html"
+  },
+
+  "permissions": ["storage"]
 }
