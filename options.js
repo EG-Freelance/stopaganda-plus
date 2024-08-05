@@ -1,3 +1,24 @@
+// toggle switch
+function toggleSwitch(){
+	// listen for changes
+	tog = document.querySelector('.toggle');
+	tog.addEventListener('click', function(e) {
+		var toggle = this;
+
+		e.preventDefault();
+
+		toggle.classList.toggle('toggle--on')
+		toggle.classList.toggle('toggle--off')
+		toggle.classList.add('toggle-moving')
+
+		document.querySelector('#badge-bias').checked = toggle.classList.contains('toggle--on')
+
+		setTimeout(function() {
+			toggle.classList.remove('toggle--moving');
+		}, 200)
+	});
+}
+
 // Save options to chrome.storage
 function saveOptions(){
 	// identify toggles
@@ -10,7 +31,9 @@ function saveOptions(){
 	targets.forEach(function(e){ stopagandaSettings[e['name']] = e['checked'] })
 	chrome.storage.sync.set({
 		stopagandaSettings: stopagandaSettings
-	}, function(){ console.log("Stopaganda settings updated")});
+	}, function(){ 
+		console.log("Stopaganda settings updated")
+	});
 }
 
 // Restore radio buttons using preferences stored in chrome.storage
@@ -45,14 +68,23 @@ function restoreOptions(){
 		Object.keys(settings).forEach(function(k){
 			document.getElementById(k).checked = settings[k];
 		})
+
+		// set bias/acc toggle
+		tog = document.querySelector('.toggle');
+		if(settings['badge-bias']){
+			tog.classList = ['toggle toggle--on opt'];
+		}else{
+			tog.classList = ['toggle toggle--off opt']
+		}
 	});
 }
 
 document.addEventListener('DOMContentLoaded', function(){
 	// Initialize options saving/loading
 	restoreOptions();
+	toggleSwitch();
 
-	var elements = document.getElementsByClassName('switch');
+	var elements = document.getElementsByClassName('opt');
 	Array.from(elements).forEach(function(el){
 		el.addEventListener('click', function(){ saveOptions() });
 	});
@@ -70,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function(){
 			// also specify a callback to be called from the receiving end (content script)
 			function(response){ 
 				if(chrome.runtime.lastError){
+					console.log(chrome.runtime.lastError);
 					// do nothing
 				}else{ 
 					setSourceInfo(response);

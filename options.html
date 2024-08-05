@@ -59,7 +59,7 @@
       }
 
       /* Hide default HTML checkbox */
-      .switch input {
+      .switch input, input#badge-bias {
         opacity: 0;
         width: 0;
         height: 0;
@@ -118,6 +118,74 @@
         position: relative;
         font-size: 18px;
       }
+
+      /* Switch toggle */
+      .toggle {
+        position: relative;
+        display: block;
+        margin: 0;
+        margin-top: 12px;
+        width: 150px;
+        height: 60px;
+        color: white;
+        outline: 0;
+        text-decoration: none;
+        border-radius: 100px;
+        border: 2px solid #546E7A;
+        background-color: #263238;
+        transition: all 500ms;
+        &:active {
+          background-color: darken(#263238, 5%);
+        }
+        &:hover:not(.toggle--moving) {
+          &:after {
+            background-color: #455A64;
+          }
+        }
+        &:after {
+          display: block;
+          position: absolute;
+          top: 4px;
+          bottom: 4px;
+          left: 4px;
+          width: calc(50% - 8px);
+          line-height: 45px;
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 20px;
+          color: white;
+          background-color: #37474F;
+          border: 2px solid;
+          transition: all 500ms; 
+        }
+      }
+      .toggle--on {
+        &:after {
+          content: 'Bias';
+          border-radius: 50px 5px 5px 50px;
+          color: #36f4f4;
+        }
+      }
+      .toggle--off {
+        &:after {
+          content: 'Acc';
+          border-radius: 5px 50px 50px 5px;
+          transform: translate(100%, 0);
+          color: #f4f436;
+        }
+      }
+      .toggle--moving {
+        background-color: darken(#263238, 5%);
+        &:after {
+          color: transparent;
+          border-color: darken(#546E7A, 8%);
+          background-color: darken(#37474F, 10%);
+          transition: color 0s,
+                      transform 500ms,
+                      border-radius 500ms,          
+                      background-color 500ms;
+        }
+      }
     </style>
   </head>
   <body>
@@ -140,27 +208,32 @@
     </div>
 
     <div id="options" class="tabcontent">
-      <hr>
-      <h1>Activate Stopaganda for:</h1>
-      <hr>
       <form id="stopaganda-options">
-        <label class="switch">
+        <hr>
+        <h1>Badge Display</h1>
+        <hr>
+        <a href="#" class="toggle toggle--on opt" style='text-align: left'></a>
+        <input type="checkbox" id="badge-bias">
+        <hr>
+        <h1>Activate Stopaganda for:</h1>
+        <hr>
+        <label class="switch opt">
           <input type="checkbox" id="facebook">
           <span class="slider round"></span>
         </label><b class="label-center">&nbsp;&nbsp;Facebook</b><br><br>
-        <label class="switch">
+        <label class="switch opt">
           <input type="checkbox" id='reddit'>
           <span class="slider round"></span>
         </label><b class="label-center">&nbsp;&nbsp;Reddit</b><br><br>
-        <label class="switch">
+        <label class="switch opt">
           <input type="checkbox" id='google'>
           <span class="slider round"></span>
         </label><b class="label-center">&nbsp;&nbsp;Google</b><br><br>
-        <label class="switch">
+        <label class="switch opt">
           <input type="checkbox" id='twitter'>
           <span class="slider round"></span>
         </label><b class="label-center">&nbsp;&nbsp;Twitter</b><br><br>
-        <label class="switch">
+        <label class="switch opt">
           <input type="checkbox" id='ddg'>
           <span class="slider round"></span>
         </label><b class="label-center">&nbsp;&nbsp;DuckDuckGo</b>
