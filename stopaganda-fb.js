@@ -22,14 +22,21 @@ function runStopaganda(){
 
   // function to add decal to target element
   function updateHTML(el, sourceHash){
-    var sourceMatch = el[1];
-    if(sourceHash[sourceMatch] != null){
-      var sourceData = sourceHash[sourceMatch]
-    }else{
-      // dig one level deeper for domain if no match exists in sourceHash
-      var sourceMatch = el[3].match(/(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-]+\.(?:com|gov|edu|net|org|mil))/)
-      if(sourceMatch){
-        var sourceData = sourceHash[sourceMatch[1]];
+    // SPECIAL CASES
+    if(el[2].match(/borowitz-report/)){
+      var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
+    }else if(el[2].match(/bloomberg.com\/citylab/)){
+      var sourceData = sourceHash["bloomberg.com/citylab"]
+    }else{ 
+      var sourceMatch = el[1];
+      if(sourceHash[sourceMatch] != null){
+        var sourceData = sourceHash[sourceMatch]
+      }else{
+        // dig one level deeper for domain if no match exists in sourceHash
+        var sourceMatch = el[3].match(/(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-]+\.(?:com|gov|edu|net|org|mil))/)
+        if(sourceMatch){
+          var sourceData = sourceHash[sourceMatch[1]];
+        }
       }
     }
   

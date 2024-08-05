@@ -3,6 +3,12 @@ function getSourceData(sourceHash){
 	var url = document.location.href
 	var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
 	var sourceMatch = url.match(linkRegex)[1]
+	// handle bloomberg/citylab
+	if(sourceMatch == 'bloomberg.com'){
+		if(url.indexOf('bloomberg.com/citylab'.toLowerCase()) >= 0){
+			sourceMatch = 'bloomberg.com/citylab'
+		}
+	}
 
 	// check to see if scrubbed link is in source list
 	if(sourceHash[sourceMatch] != null){

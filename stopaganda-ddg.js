@@ -24,7 +24,9 @@ function runStopaganda(){
     // SPECIAL CASES
     if(el[2].match(/borowitz-report/)){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
-    }else{
+    }else if(el[2].match(/bloomberg.com\/citylab/)){
+      var sourceData = sourceHash["bloomberg.com/citylab"]
+    }else{ 
       var sourceMatch = el[1];
       // dig one level deeper for domain if no match exists in sourceHash
       if(sourceHash[sourceMatch] != null){
@@ -303,7 +305,6 @@ function runStopaganda(){
         }
       }
 
-      
       // combine
       var baseLinks = standardLinks.concat(cardLinks);
       

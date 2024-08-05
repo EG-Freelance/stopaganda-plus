@@ -22,14 +22,20 @@ function runStopaganda(){
 
   // function to add decal to target element
   function updateHTML(el, sourceHash, oldReddit){
-    // NOTE: Currently no need to set special cases for satires with current subreddits targeted
-    var sourceMatch = el[1];
-    // dig one level deeper for domain if no match exists in sourceHash
-    if(sourceHash[sourceMatch] != null){
-      var sourceData = sourceHash[sourceMatch];
-    }else{
-      var sourceMatch = sourceMatch.match(/(?:.*?)\.(.*)/)[1];
-      var sourceData = sourceHash[sourceMatch];
+    // SPECIAL CASES
+    if(el[2].match(/borowitz-report/)){
+      var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
+    }else if(el[2].match(/bloomberg.com\/citylab/)){
+      var sourceData = sourceHash["bloomberg.com/citylab"]
+    }else{ 
+      var sourceMatch = el[1];
+      // dig one level deeper for domain if no match exists in sourceHash
+      if(sourceHash[sourceMatch] != null){
+        var sourceData = sourceHash[sourceMatch];
+      }else{
+        var sourceMatch = sourceMatch.match(/(?:.*?)\.(.*)/)[1];
+        var sourceData = sourceHash[sourceMatch];
+      }
     }
     
     // unsure whether to include "blog" in regex -- better to have false negatives or false positives?
