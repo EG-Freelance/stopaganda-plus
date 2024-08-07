@@ -23,9 +23,9 @@ function runStopaganda(){
   // function to add decal to target element
   function updateHTML(el, sourceHash, oldReddit){
     // SPECIAL CASES
-    if(el[1].match(/borowitz-report/)){
+    if(el[0].textContent.match(/borowitz-report/)){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
-    }else if(el[1].match(/bloomberg.com\/citylab/)){
+    }else if(el[0].textContent.match(/bloomberg.com\/citylab/)){
       var sourceData = sourceHash["bloomberg.com/citylab"]
     }else{ 
       var sourceMatch = el[1];

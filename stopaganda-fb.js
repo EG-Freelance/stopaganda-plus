@@ -23,9 +23,9 @@ function runStopaganda(){
   // function to add decal to target element
   function updateHTML(el, sourceHash){
     // SPECIAL CASES
-    if(el[1].match(/borowitz-report/)){
+    if(el[3].match(/borowitz-report/)){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
-    }else if(el[1].match(/bloomberg.com\/citylab/)){
+    }else if(el[3].match(/bloomberg.com\/citylab/)){
       var sourceData = sourceHash["bloomberg.com/citylab"]
     }else{ 
       var sourceMatch = el[1];
