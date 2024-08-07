@@ -21,7 +21,7 @@ chrome.storage.sync.get('stopagandaSettings', function(results){
 function runStopaganda(){
 
   // function to add decal to target element
-  function updateHTML(el, sourceHash, oldReddit){
+  function updateHTML(el, sourceHash, rType){
     // SPECIAL CASES
     if(el[0].textContent.match(/borowitz-report/)){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
@@ -138,7 +138,7 @@ function runStopaganda(){
     }
 
     if(sourceData == null){
-      if(oldReddit){
+      if(rType == 'old'){
         el[2].insertAdjacentElement('afterend', decalOpSpan);
       }else{
         el[0].insertAdjacentElement('afterend', decalOpSpan);
@@ -172,35 +172,41 @@ function runStopaganda(){
       decalLink.appendChild(decalBiasSpan);
       decalLink.appendChild(decalOpSpan);
 
-      if(oldReddit){
+      if(rType == 'old'){
         el[2].insertAdjacentElement('afterend', decalLink);
-      }else{
+      }else if(rType == 'new'){
         el[0].insertAdjacentElement('afterend', decalLink);
+      }else{
+        el[2].insertAdjacentElement('beforeend', decalLink);
       }
       return true;
     }
   }
 
   // function to identify target elements
-  function run(sourceHash, oldReddit, collection){
+  function run(sourceHash, rType, collection){
     if(collection == null){
       // if null, the script isn't meant for this page
       return false;
     }
     // set base subreddits for which tagging is relevant
     if(collection){
-      if(!oldReddit){
+      if(rType == 'new'){
         if(document.querySelectorAll('[data-click-id=subreddit]').length == 0){
           return false;
         }
-      }else{
+      }else if(rType == 'old'){
         if(document.querySelectorAll('.subreddit').length == 0){
           return false;
         }
+      }else{
+
       }
       baseSubs = ['r/news', 'r/inthenews', 'r/worldnews', 'r/politics', 'r/canada', 'r/europe', 'r/unitedkingdom'];
     }
-    if(oldReddit){
+    if(rType == 'old'){
+      // return [fullLink, baseLink, placeholder for rType-specific element]
+      // OLD
       var linkParentClass = "p.title";
       // get link element parents
       var sources = document.querySelectorAll(linkParentClass + ':not(.stopaganda)');
@@ -219,7 +225,8 @@ function runStopaganda(){
         link = e.querySelector('a');
         return [link, link.href.match(linkRegex)[1], e.querySelector('.domain')];
       });
-    }else{
+    }else if(rType == 'new'){
+      // NEW
       var linkClass = ".styled-outbound-link";
       // NOTE: 2019-08-06 -- following commented line is for in case the class above becomes deprecated
       // var sources = document.querySelectorAll('[data-click-id=body] a[target=_blank]:not([data-click-id=timestamp]):not(.stopaganda)');
@@ -235,19 +242,40 @@ function runStopaganda(){
 
       var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
       // run script to add decals to each target identified
-      // [fullLink, baseLink, placeholder for oldReddit]
       var baseLinks = sourcesArray.map(function(e){ return [e, e.href.match(linkRegex)[1], null] });
+    }else{
+      // CURRENT
+      var linkClass = ".post-link";
+      // get link elements
+      var sources = document.querySelectorAll(linkClass + ':not(.stopaganda)');
+      // add stopaganda class to each element to make sure that script isn't run multiple times on the same element
+      sources.forEach(function(e){ e.classList.add('stopaganda') });
+      var sourcesArray = Array.from(sources);
+      // get tags only for entries that identify as one of base subs if this is a collection page
+      if(collection){
+        sourcesArray = sourcesArray.filter(function(e) { return baseSubs.indexOf(e.parentElement.parentElement.parentElement.parentElement.querySelector('a.text-neutral-content.flex').querySelector('span').textContent) >= 0 } )
+      }
+
+      var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
+      // run script to add decals to each target identified
+      // [fullLink, baseLink, placeholder for rType]
+      var baseLinks = sourcesArray.map(function(e){ return [e, e.href.match(linkRegex)[1], e.parentElement.parentElement.parentElement.parentElement.querySelector('div')] });
     }
     
     baseLinks.forEach(function(e){
-      updateHTML(e, sourceHash, oldReddit);
+      updateHTML(e, sourceHash, rType);
     });
   }
 
   // Wait until page is fully loaded then define observer
   function initObserver(){
-    // define whether page is old or new layout
-    var oldReddit = document.getElementById('header-bottom-left') != null;
+    if(document.getElementsByClassName('w-full m-0').length > 0){
+      rType = 'current';   
+    }else if(document.getElementById('header-bottom-left') != null){
+      rType = 'old';
+    }else{
+      rType = 'new';
+    }
     // define which subreddit/root is loaded
     var url = document.location.href
     var parsedUrl = url.match(/reddit.com(?:\/r\/(.*?)(?:\/|$))?/);
@@ -283,11 +311,15 @@ function runStopaganda(){
         var collection = null;
         break;
     }
-    if(!oldReddit){  
+    if(rType != 'old'){
       // old Reddit doesn't have infinite scroll, so not necessary there
 
       // set target element's array in a way that won't raise an error if it doesn't exist
-      var targetNodeClassName = Array.from(document.getElementsByTagName('div')).filter(function(el){ return el.children.length > 15 })[0]; // Use this methodology to grab target element regardless of how Reddit changes class names -- 2019/06/13
+      if(rType == 'new'){
+        var targetNodeClassName = Array.from(document.getElementsByTagName('div')).filter(function(el){ return el.children.length > 15 })[0]; // Use this methodology to grab target element regardless of how Reddit changes class names -- 2019/06/13
+      }else if(rType == 'current'){
+        var targetNodeClassName = document.querySelector('.main.w-full')
+      }
       // cancel if there is no targetNodeClassName
       if(!targetNodeClassName){
         console.log("This page is not Stopaganda-eligible");
@@ -309,20 +341,25 @@ function runStopaganda(){
       // create observer protocol
       var observer = new MutationObserver(function(mutationsList, observer){
         for(var mutation of mutationsList){
-          run(sourceHash, oldReddit, collection);
+          run(sourceHash, rType, collection);
         }
       });
 
       // instantiate observer
       observer.observe(targetEl, config);
       // only run if target2 exists
-      target2 = document.querySelector(".rpBJOHq2PR60pnwJlUyP0")
+      if(rType == 'new'){
+        target2 = document.querySelector(".rpBJOHq2PR60pnwJlUyP0");
+      }else{
+        target2 = document.querySelector(".highlight-card");
+      }
+        
       if(target2){
         observer.observe(target2.parentElement, config);
       }
     }
   	// Run initial time on load
-  	run(sourceHash, oldReddit, collection);
+  	run(sourceHash, rType, collection);
   }
 
   // run initObserver whenever reddit location changes
@@ -330,7 +367,7 @@ function runStopaganda(){
   prevNodeSet = document.querySelectorAll('[data-click-id=subreddit]').length;
   setInterval(function(){
     currUrl = document.location.href;
-    currNodeSet = document.querySelectorAll('[data-click-id=subreddit]').length;
+    currNodeSet = document.querySelectorAll('.w-full.m-0').length;
     if((prevURL != currUrl) || (prevNodeSet != currNodeSet)){
       initObserver();
       prevURL = currUrl;
