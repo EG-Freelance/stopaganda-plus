@@ -22,9 +22,9 @@ function runStopaganda(){
   // function to add decal to target element
   function updateHTML(el, sourceHash){
     // SPECIAL CASES
-    if(el[2].match(/borowitz-report/)){
+    if(el[1].match(/borowitz-report/)){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
-    }else if(el[2].match(/bloomberg.com\/citylab/)){
+    }else if(el[1].match(/bloomberg.com\/citylab/)){
       var sourceData = sourceHash["bloomberg.com/citylab"]
     }else{ 
       var sourceMatch = el[1];
@@ -196,16 +196,17 @@ function runStopaganda(){
 
   // function to identify target elements
   function run(sourceHash){
-    var tab = document.getElementsByClassName('zcm__link is-active')
+    var tab = document.getElementsByClassName('SnptgjT2zdOhGYfNng6g');
     var i = 0;
     var j = 0;
     if(tab.length == 0){
       console.log("Not a Stopaganda-eligible page");
       return true;
-    }else if(tab[0].textContent == "All"){
+    }else if(tab[0].textContent.indexOf("All") >= 0){
       // Default tab
-      var linkClass = ".Wo6ZAEmESLNUuWBkbMxx";
-      var cardClass = ".module--carousel__item";
+      var linkClass = ".wLL07_0Xnd1QZpzpfR4W";
+      var cardClass = ".module--carousel__item.has-image";
+
       // get link elements
       var standard = document.querySelectorAll(linkClass + ":not(.stopaganda)");
       standard.forEach(function(e){ e.classList.add('stopaganda') });
@@ -218,7 +219,7 @@ function runStopaganda(){
       var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
       // run script to add decals to each target identified
       // [targetEl, baseLink, fullLinkText, card]
-      var standardLinks = standardArray.map(function(e){ return [e.closest('.OQ_6vPwNhCeusNiEDcGp'), e.textContent.match(linkRegex)[1], e.textContent, false] }).filter(function(e) { return e[0] });
+      var standardLinks = standardArray.map(function(e){ return [e.querySelector('.OQ_6vPwNhCeusNiEDcGp'), e.textContent.match(linkRegex)[1], e.textContent, false] }).filter(function(e) { return e[0] });
       var cardLinks = cardsArray.map(function(e){ return [e.querySelector('.module--carousel__footer'), e.getAttribute('data-link').match(linkRegex)[1], e.getAttribute('data-link'), true] })
 
       // refactor carousel items to make room for decals and make links clickable
@@ -312,7 +313,7 @@ function runStopaganda(){
         updateHTML(e, sourceHash);
       });
 
-    }else if(tab[0].textContent == "News"){
+    }else if(tab[0].textContent.indexOf("News") >= 0){
       // Default tab
       var linkClass = ".result--news";
       // get link elements
@@ -343,7 +344,7 @@ function runStopaganda(){
         updateHTML(e, sourceHash);
       });
 
-    }else if(tab[0].textContent == "Videos"){
+    }else if(tab[0].textContent.indexOf("Videos") >= 0){
       // Default tab
       var linkClass = ".tile--vid";
       // get link elements
