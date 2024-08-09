@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Stopaganda Plus",
-  "version": "5.2.0",
+  "version": "5.2.2",
 
   "description": "Applies decals to Facebook, Twitter, Google, Reddit, and DuckDuckGo showing bias and acc data from mediabiasfactcheck.com",
 

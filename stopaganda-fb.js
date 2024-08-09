@@ -25,8 +25,10 @@ function runStopaganda(){
     // SPECIAL CASES
     if(el[3].match(/borowitz-report/)){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
-    }else if(el[3].match(/bloomberg.com\/citylab/)){
+    }else if(el[3].match(/bloomberg\.com\/citylab/)){
       var sourceData = sourceHash["bloomberg.com/citylab"]
+    }else if(el[3].match(/theguardian\.com\/observer/)){
+      var sourceData = sourceHash["theguardian.com/observer"]
     }else{ 
       var sourceMatch = el[1];
       if(sourceHash[sourceMatch] != null){

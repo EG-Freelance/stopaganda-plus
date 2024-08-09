@@ -27,6 +27,8 @@ function runStopaganda(){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
     }else if(el[2].match(/bloomberg.com\/citylab/)){
       var sourceData = sourceHash["bloomberg.com/citylab"]
+    }else if(el[2].match(/theguardian.com\/observer/)){
+      var sourceData = sourceHash["theguardian.com/observer"]
     }else{ 
       var sourceMatch = el[1];
       // dig one level deeper for domain if no match exists in sourceHash

@@ -3,10 +3,15 @@ function getSourceData(sourceHash){
 	var url = document.location.href
 	var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
 	var sourceMatch = url.match(linkRegex)[1]
-	// handle bloomberg/citylab
 	if(sourceMatch == 'bloomberg.com'){
+		// handle bloomberg/citylab
 		if(url.indexOf('bloomberg.com/citylab'.toLowerCase()) >= 0){
 			sourceMatch = 'bloomberg.com/citylab'
+		}
+	}else if(sourceMatch == 'theguardian.com'){
+		// handle theguardian/observer
+		if(url.indexOf('theguardian.com/observer'.toLowerCase()) >= 0){
+			sourceMatch = 'theguardian.com/observer'
 		}
 	}
 
