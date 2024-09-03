@@ -22,13 +22,21 @@ function runStopaganda(){
 
   // function to add decal to target element
   function updateHTML(el, sourceHash, rType){
+    console.log(el);
+    if(rType == 'compact'){
+      fullLink = el[0].getAttribute('content-href')
+    }else{
+      fullLink = el[0].textContent
+    }
     // SPECIAL CASES
-    if(el[0].textContent.match(/borowitz-report/)){
+    if(fullLink.match(/borowitz-report/)){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
-    }else if(el[0].textContent.match(/bloomberg.com\/citylab/)){
+    }else if(fullLink.match(/bloomberg.com\/citylab/)){
       var sourceData = sourceHash["bloomberg.com/citylab"]
-    }else if(el[0].textContent.match(/theguardian.com\/observer/)){
+    }else if(fullLink.match(/theguardian.com\/observer/)){
       var sourceData = sourceHash["theguardian.com/observer"]
+    }else if(fullLink.match(/huffpost.com\/highline/)){
+      var sourceData = sourceHash["huffpost.com/highline"]
     }else{ 
       var sourceMatch = el[1];
       // dig one level deeper for domain if no match exists in sourceHash
@@ -42,7 +50,7 @@ function runStopaganda(){
     
     // unsure whether to include "blog" in regex -- better to have false negatives or false positives?
     var opRegex = /opinion/;
-    var opinion = el[0].href.match(opRegex);
+    var opinion = fullLink.match(opRegex);
 
     if(sourceData != null){
       if(sourceData['href'] != "NO URL FOUND"){
@@ -176,10 +184,12 @@ function runStopaganda(){
 
       if(rType == 'old'){
         el[2].insertAdjacentElement('afterend', decalLink);
-      }else if(rType == 'new'){
-        el[0].insertAdjacentElement('afterend', decalLink);
+      // }else if(rType == 'card'){
+        // el[2].insertAdjacentElement('beforeend', decalLink);
+      }else if(rType == 'card' || rType == 'compact'){
+        el[2].closest('shreddit-post').insertAdjacentElement('beforebegin', decalLink);
       }else{
-        el[2].insertAdjacentElement('beforeend', decalLink);
+        el[0].insertAdjacentElement('afterend', decalLink);
       }
       return true;
     }
@@ -206,6 +216,7 @@ function runStopaganda(){
       }
       baseSubs = ['r/news', 'r/inthenews', 'r/worldnews', 'r/politics', 'r/canada', 'r/europe', 'r/unitedkingdom'];
     }
+
     if(rType == 'old'){
       // return [fullLink, baseLink, placeholder for rType-specific element]
       // OLD
@@ -227,7 +238,42 @@ function runStopaganda(){
         link = e.querySelector('a');
         return [link, link.href.match(linkRegex)[1], e.querySelector('.domain')];
       });
-    }else if(rType == 'new'){
+    }else if(rType == 'card'){
+      // CARD
+      var linkClass = ".post-link";
+      // get link elements
+      var sources = document.querySelectorAll(linkClass + ':not(.stopaganda)');
+      // add stopaganda class to each element to make sure that script isn't run multiple times on the same element
+      sources.forEach(function(e){ e.classList.add('stopaganda') });
+      var sourcesArray = Array.from(sources);
+      // get tags only for entries that identify as one of base subs if this is a collection page
+      if(collection){
+        sourcesArray = sourcesArray.filter(function(e) { return baseSubs.indexOf(e.parentElement.parentElement.parentElement.parentElement.querySelector('a.text-neutral-content.flex span').textContent) >= 0 } )
+      }
+
+      var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
+      // run script to add decals to each target identified
+      // [fullLinkElement, baseLink, placeholder for rType]
+      var baseLinks = sourcesArray.map(function(e){ return [e, e.href.match(linkRegex)[1], e.parentElement.parentElement.parentElement.parentElement.querySelector('div')] });
+    }else if(rType == 'compact'){
+      // COMPACT
+      var linkClass = "shreddit-post";
+      // get link elements
+      var sources = document.querySelectorAll(linkClass + ':not(.stopaganda)');
+      // add stopaganda class to each element to make sure that script isn't run multiple times on the same element
+      sources.forEach(function(e){ e.classList.add('stopaganda') });
+      var sourcesArray = Array.from(sources);
+      // get tags only for entries that identify as one of base subs if this is a collection page
+      if(collection){
+        sourcesArray = sourcesArray.filter(function(e) { return baseSubs.indexOf(e.querySelector('span.relative a span').textContent) >= 0 } )
+      }
+
+      var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
+      // run script to add decals to each target identified
+      // [fullLink, baseLink, placeholder for rType]
+      var baseLinks = sourcesArray.map(function(e){ return [e, e.getAttribute('content-href').match(linkRegex)[1], e.querySelector('span.relative a span').parentElement] });
+    }else{
+      // NOTE: 2024-09-03 -- "new" may now be fully deprecated.  
       // NEW
       var linkClass = ".styled-outbound-link";
       // NOTE: 2019-08-06 -- following commented line is for in case the class above becomes deprecated
@@ -245,25 +291,8 @@ function runStopaganda(){
       var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
       // run script to add decals to each target identified
       var baseLinks = sourcesArray.map(function(e){ return [e, e.href.match(linkRegex)[1], null] });
-    }else{
-      // CURRENT
-      var linkClass = ".post-link";
-      // get link elements
-      var sources = document.querySelectorAll(linkClass + ':not(.stopaganda)');
-      // add stopaganda class to each element to make sure that script isn't run multiple times on the same element
-      sources.forEach(function(e){ e.classList.add('stopaganda') });
-      var sourcesArray = Array.from(sources);
-      // get tags only for entries that identify as one of base subs if this is a collection page
-      if(collection){
-        sourcesArray = sourcesArray.filter(function(e) { return baseSubs.indexOf(e.parentElement.parentElement.parentElement.parentElement.querySelector('a.text-neutral-content.flex').querySelector('span').textContent) >= 0 } )
-      }
-
-      var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
-      // run script to add decals to each target identified
-      // [fullLink, baseLink, placeholder for rType]
-      var baseLinks = sourcesArray.map(function(e){ return [e, e.href.match(linkRegex)[1], e.parentElement.parentElement.parentElement.parentElement.querySelector('div')] });
     }
-    
+
     baseLinks.forEach(function(e){
       updateHTML(e, sourceHash, rType);
     });
@@ -271,12 +300,22 @@ function runStopaganda(){
 
   // Wait until page is fully loaded then define observer
   function initObserver(){
-    if(document.getElementsByClassName('w-full m-0').length > 0){
-      rType = 'current';   
+    if(document.querySelectorAll('.post-link').length > 0){
+      rType = 'card';
+    }else if(document.querySelectorAll('div[slot=overflow-menu-bar]').length > 0){
+      rType = 'compact';
     }else if(document.getElementById('header-bottom-left') != null){
       rType = 'old';
     }else{
-      rType = 'new';
+      // last ditch effort
+      if(document.location.href.indexOf('cardView') >= 0){
+        rType = 'card';
+      }else if(document.location.href.indexOf('compactView') >= 0){
+        rType = 'compact';
+      }else{
+        console.log('unable to detect layout signature....');
+        rType = 'tbd';
+      }
     }
     // define which subreddit/root is loaded
     var url = document.location.href
@@ -317,10 +356,10 @@ function runStopaganda(){
       // old Reddit doesn't have infinite scroll, so not necessary there
 
       // set target element's array in a way that won't raise an error if it doesn't exist
-      if(rType == 'new'){
-        var targetNodeClassName = Array.from(document.getElementsByTagName('div')).filter(function(el){ return el.children.length > 15 })[0]; // Use this methodology to grab target element regardless of how Reddit changes class names -- 2019/06/13
-      }else if(rType == 'current'){
+      if(rType == 'card' || rType == 'compact'){
         var targetNodeClassName = document.querySelector('.main.w-full')
+      }else if(rType == 'new'){
+        var targetNodeClassName = Array.from(document.getElementsByTagName('div')).filter(function(el){ return el.children.length > 15 })[0]; // Use this methodology to grab target element regardless of how Reddit changes class names -- 2019/06/13
       }
       // cancel if there is no targetNodeClassName
       if(!targetNodeClassName){

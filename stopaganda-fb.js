@@ -29,6 +29,8 @@ function runStopaganda(){
       var sourceData = sourceHash["bloomberg.com/citylab"]
     }else if(el[3].match(/theguardian\.com\/observer/)){
       var sourceData = sourceHash["theguardian.com/observer"]
+    }else if(el[3].match(/huffpost\.com\/highline/)){
+      var sourceData = sourceHash["huffpost.com/highline"]
     }else{ 
       var sourceMatch = el[1];
       if(sourceHash[sourceMatch] != null){

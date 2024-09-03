@@ -13,6 +13,11 @@ function getSourceData(sourceHash){
 		if(url.indexOf('theguardian.com/observer'.toLowerCase()) >= 0){
 			sourceMatch = 'theguardian.com/observer'
 		}
+	}else if(sourceMatch == 'huffpost.com'){
+		// handle theguardian/observer
+		if(url.indexOf('huffpost.com/highline'.toLowerCase()) >= 0){
+			sourceMatch = 'huffpost.com/highline'
+		}
 	}
 
 	// check to see if scrubbed link is in source list
