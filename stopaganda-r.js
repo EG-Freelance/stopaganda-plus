@@ -187,7 +187,8 @@ function runStopaganda(){
       // }else if(rType == 'card'){
         // el[2].insertAdjacentElement('beforeend', decalLink);
       }else if(rType == 'card' || rType == 'compact'){
-        el[2].closest('shreddit-post').insertAdjacentElement('beforebegin', decalLink);
+        // el[2].closest('shreddit-post').insertAdjacentElement('beforebegin', decalLink);
+        el[2].insertAdjacentElement('afterbegin', decalLink);
       }else{
         el[0].insertAdjacentElement('afterend', decalLink);
       }
@@ -254,7 +255,7 @@ function runStopaganda(){
       var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
       // run script to add decals to each target identified
       // [fullLinkElement, baseLink, placeholder for rType]
-      var baseLinks = sourcesArray.map(function(e){ return [e, e.href.match(linkRegex)[1], e.parentElement.parentElement.parentElement.parentElement.querySelector('div')] });
+      var baseLinks = sourcesArray.map(function(e){ return [e, e.href.match(linkRegex)[1], e.parentElement.parentElement.parentElement.parentElement.querySelector('faceplate-hovercard')] });
     }else if(rType == 'compact'){
       // COMPACT
       var linkClass = "shreddit-post";
@@ -271,7 +272,7 @@ function runStopaganda(){
       var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
       // run script to add decals to each target identified
       // [fullLink, baseLink, placeholder for rType]
-      var baseLinks = sourcesArray.map(function(e){ return [e, e.getAttribute('content-href').match(linkRegex)[1], e.querySelector('span.relative a span').parentElement] });
+      var baseLinks = sourcesArray.map(function(e){ return [e, e.getAttribute('content-href').match(linkRegex)[1], e.querySelector('faceplate-hovercard')] });
     }else{
       // NOTE: 2024-09-03 -- "new" may now be fully deprecated.  
       // NEW
