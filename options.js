@@ -289,8 +289,14 @@ const setSourceInfo = function(info){
 				break;
 		  }
 		}else{
+			bSummary = document.getElementById('bias-summary');
+			newSourceLink = document.createElement('a');
+			newSourceLink.setAttribute('id', 'bias-summary');
+			newSourceLink.setAttribute('href', 'https://mediabiasfactcheck.com/submit-source/');
+			newSourceLink.setAttribute('target', '_blank');
+			newSourceLink.textContent = 'Source not found... click here to submit new source';
+			bSummary.replaceWith(newSourceLink);
 			document.getElementById('bias-title').textContent = "N/A";
-			document.getElementById('bias-summary').textContent = "Could not find relevant data for this webpage";
 			document.getElementById('acc-rating').textContent = "N/A";
 		}
 	}

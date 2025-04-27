@@ -223,7 +223,7 @@ function runStopaganda(){
       var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
       // run script to add decals to each target identified
       // [targetEl, baseLink, fullLinkText, card]
-      var standardLinks = standardArray.map(function(e){ return [e.querySelector('.OQ_6vPwNhCeusNiEDcGp'), e.textContent.match(linkRegex)[1], e.textContent, false] }).filter(function(e) { return e[0] });
+      var standardLinks = standardArray.map(function(e){ return [e.querySelector('.OQ_6vPwNhCeusNiEDcGp'), e.querySelector('.xS2NxE06pIznLuh2xjH0').textContent.match(linkRegex)[1], e.querySelector('.xS2NxE06pIznLuh2xjH0').textContent, false] }).filter(function(e) { return e[0] });
       var cardLinks = cardsArray.map(function(e){ return [e.querySelector('.module--carousel__footer'), e.getAttribute('data-link').match(linkRegex)[1], e.getAttribute('data-link'), true] })
 
       // refactor carousel items to make room for decals and make links clickable

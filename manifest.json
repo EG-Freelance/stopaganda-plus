@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Stopaganda Plus",
-  "version": "5.3.0",
+  "version": "5.4.5",
 
-  "description": "Applies decals to Facebook, Bluesky, Threads, Google, Reddit, and DuckDuckGo showing bias and acc data from mediabiasfactcheck.com",
+  "description": "Applies decals or displays badges to FB, BSky, Threads, Google, Reddit, DDG, and individual media sources showing bias and acc data",
 
   "icons": {
     "48": "icons/stopaganda-plus-48.png",

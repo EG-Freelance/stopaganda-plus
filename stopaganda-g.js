@@ -17,11 +17,11 @@ chrome.storage.sync.get('stopagandaSettings', function(results){
 });
 
 // only run if showGoogle
-
 function runStopaganda(){
 
   // function to add decal to target element
   function updateHTML(el, sourceHash){
+    console.log(el);
     // SPECIAL CASES
     if(el[2].match(/borowitz-report/)){
       var sourceData = sourceHash["https://www.newyorker.com/humor/borowitz-report"];
@@ -134,11 +134,17 @@ function runStopaganda(){
 
     var decalOpSpan = document.createElement("span");
 
-    // size down if card
+    // modifications for card vs line
     if(el[3]){
+      // if card
       var size = "font-size: 75%; "
+      decalParent = el[0].parentElement;
+      decalLocation = 'beforeEnd'
     }else{
+      // if standard (/other?)
       var size = ""
+      decalParent = el[0]
+      decalLocation = 'afterEnd'
     }
 
     // create opinion HTML
@@ -184,7 +190,7 @@ function runStopaganda(){
       decalContainer.appendChild(decalLink);
       decalContainer.style = "margin-left: 5px; margin-bottom: 7px"
 
-      el[0].insertAdjacentElement('afterend', decalContainer);
+      decalParent.insertAdjacentElement(decalLocation, decalContainer);
 
       return true;
     }
@@ -195,8 +201,8 @@ function runStopaganda(){
     var tabCheck = document.getElementsByClassName('MgQdud');
     if(tabCheck.length == 0){
       // Default tab
-      var linkClass = ".iUh30";
-      var cardClass = ".WlydOe";
+      var linkClass = ".tjvcx.GvPZzd.cHaqb";
+      var cardClass = ".WlydOe, .ddkIM.c30Ztd";
       // get link elements
       var standard = document.querySelectorAll(linkClass + ':not(.stopaganda)');
       var cards = document.querySelectorAll(cardClass + ':not(.stopaganda)');
@@ -210,7 +216,7 @@ function runStopaganda(){
       var linkRegex = /(?:https?\:\/\/)?(?:www\.)?([A-Za-z0-9\_\-\.]+)\/?/;
       // run script to add decals to each target identified
       // [targetEl, baseLink, fullLinkText, card]
-      var standardLinks = standardArray.filter(function(e){ return e.closest('a') }).map(function(e){ return [e.closest('a'), e.closest('a').href.match(linkRegex)[1], e.closest('a').href, false] });
+      var standardLinks = standardArray.filter(function(e){ return e.closest('a') }).map(function(e){ return [e.closest('.q0vns'), e.closest('a').href.match(linkRegex)[1], e.closest('a').href, false] });
       var cardLinks = cardsArray.map(function(e){ return [e, e.href.match(linkRegex)[1], e.href, true] });
 
       // combine
@@ -303,7 +309,7 @@ function runStopaganda(){
       return;
     }
     // set config for observer
-    var config = { childList: true, subtree: true };
+    var config = { childList: true };
 
     // create observer protocol
     var observer = new MutationObserver(function(mutationsList, observer){
